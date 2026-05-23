@@ -1,0 +1,6 @@
+[
+  { "month": "Jan", "healthy": 210, "warning": 32, "critical": 8 },
+  { "month": "Feb", "healthy": 225, "warning": 28, "critical": 6 },
+  { "month": "Mar", "healthy": 240, "warning": 20, "critical": 5 },
+  { "month": "Apr", "healthy": 260, "warning": 16, "critical": 3 }
+]

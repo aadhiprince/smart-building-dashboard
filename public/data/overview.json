@@ -1,0 +1,16 @@
+{
+  "campuses": 1,
+  "buildings": 2,
+  "floors": 2,
+  "rooms": 9,
+  "users": 5,
+  "assets": 279,
+  "workOrders": 1164,
+  "workRequests": 13,
+  "alarms": 25,
+  "gateways": 5,
+  "wiredDevices": 11,
+  "wirelessDevices": 22,
+  "healthScore": 63.64,
+  "areaSqFt": 105000
+}

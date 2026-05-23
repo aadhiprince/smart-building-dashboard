@@ -1,0 +1,168 @@
+<div class="widget-container" role="region" aria-label="Asset Health Summary">
+<div class="widget-header">
+    <div class="header-text">
+      <h2>Asset Registry & Health Summary</h2>
+      <p class="subtitle">Hierarchical floor breakdowns, hardware alerts, and localized power draw statistics</p>
+    </div>
+    @if (buildings().length > 0 && !isLoading() && !errorMessage()) {
+      <button mat-stroked-button color="primary" class="refresh-btn" (click)="loadAssetHealth()">
+        <mat-icon>refresh</mat-icon> Refresh Assets
+      </button>
+    }
+  </div>
+@if (isLoading()) {
+    <div class="skeleton-accordion-container" role="status" aria-label="Loading asset data">
+      @for (i of [1, 2]; track i) {
+        <div class="skeleton-panel-header glass-panel">
+          <div class="shimmer skeleton-icon"></div>
+          <div class="shimmer skeleton-text-large"></div>
+          <div class="skeleton-badges">
+            <div class="shimmer skeleton-badge green"></div>
+            <div class="shimmer skeleton-badge orange"></div>
+            <div class="shimmer skeleton-badge red"></div>
+            <div class="shimmer skeleton-badge blue"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+@else if (errorMessage()) {
+    <mat-card class="error-card glass-panel" role="alert" aria-live="assertive">
+      <mat-card-content>
+        <div class="error-container">
+          <div class="error-icon-wrapper">
+            <mat-icon class="error-icon">dnd_forwardslash</mat-icon>
+          </div>
+          <h3>Registry Gateway Timeout</h3>
+          <p class="error-desc">{{ errorMessage() }}</p>
+          <div class="error-actions">
+            <button mat-flat-button color="warn" class="retry-btn" (click)="loadAssetHealth()">
+              <mat-icon>sync</mat-icon> Reload Asset Logs
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+@else if (buildings().length > 0) {
+    <mat-accordion [multi]="true" class="custom-accordion">
+      
+      @for (building of buildings(); track building.building; let isFirst = $first) {
+@let totals = getBuildingTotals(building);
+        
+        <mat-expansion-panel 
+          class="building-panel glass-panel" 
+          [expanded]="isFirst"
+          [class.has-critical]="totals.critical > 0"
+        >
+<mat-expansion-panel-header class="building-header-bar">
+            <mat-panel-title class="panel-title-wrapper">
+              <mat-icon class="building-icon">corporate_fare</mat-icon>
+              <div class="building-meta">
+                <h3>{{ building.building }}</h3>
+                <span class="building-floor-count">{{ building.floors.length }} levels monitored</span>
+              </div>
+            </mat-panel-title>
+
+            <mat-panel-description class="panel-desc-aggregates">
+<div class="aggregate-badges">
+<div class="agg-badge green-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{ totals.healthy }}</span>
+                </div>
+<div class="agg-badge orange-badge">
+                  <mat-icon>warning</mat-icon>
+                  <span>{{ totals.warning }}</span>
+                </div>
+<div class="agg-badge red-badge" [class.pulse-red-badge]="totals.critical > 0">
+                  <mat-icon>error</mat-icon>
+                  <span>{{ totals.critical }}</span>
+                </div>
+<div class="agg-badge blue-badge">
+                  <mat-icon>bolt</mat-icon>
+                  <span>{{ totals.energy }} {{ totals.energyUnit }}</span>
+                </div>
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+<div class="floors-grid-container">
+            @for (floor of building.floors; track floor.name) {
+              @let proportions = getProportions(floor);
+
+              <mat-card class="floor-card glass-panel" [class.floor-has-critical]="floor.assets.critical > 0">
+                <mat-card-content class="floor-card-content">
+<div class="floor-card-header">
+                    <div class="floor-title-info">
+                      <h4>{{ floor.name }}</h4>
+                      <span class="floor-sub">Active Node Breakdown</span>
+                    </div>
+                    <div class="floor-energy-badge">
+                      <mat-icon>bolt</mat-icon>
+                      <span class="val">{{ floor.energy.consumption }}</span>
+                      <span class="unit">{{ floor.energy.unit }}</span>
+                    </div>
+                  </div>
+<div class="health-ratio-visualizer">
+                    <span class="visualizer-label">Health Distribution Ratio</span>
+                    
+                    <div class="segmented-progress-bar">
+@if (proportions.healthyPct > 0) {
+                        <div 
+                          class="bar-segment healthy-segment" 
+                          [style.width.%]="proportions.healthyPct"
+                          title="Healthy: {{ floor.assets.healthy }} assets ({{ proportions.healthyPct | number:'1.0-1' }}%)"
+                        ></div>
+                      }
+@if (proportions.warningPct > 0) {
+                        <div 
+                          class="bar-segment warning-segment" 
+                          [style.width.%]="proportions.warningPct"
+                          title="Warning: {{ floor.assets.warning }} assets ({{ proportions.warningPct | number:'1.0-1' }}%)"
+                        ></div>
+                      }
+@if (proportions.criticalPct > 0) {
+                        <div 
+                          class="bar-segment critical-segment" 
+                          [style.width.%]="proportions.criticalPct"
+                          title="Critical: {{ floor.assets.critical }} assets ({{ proportions.criticalPct | number:'1.0-1' }}%)"
+                        ></div>
+                      }
+                    </div>
+                  </div>
+<div class="floor-telemetry-metrics">
+                    <div class="metric-item healthy">
+                      <mat-icon class="check-icon">check_circle_outline</mat-icon>
+                      <div class="item-data">
+                        <span class="val">{{ floor.assets.healthy }}</span>
+                        <span class="lbl">Healthy</span>
+                      </div>
+                    </div>
+
+                    <div class="metric-item warning">
+                      <mat-icon class="warn-icon">report_problem</mat-icon>
+                      <div class="item-data">
+                        <span class="val">{{ floor.assets.warning }}</span>
+                        <span class="lbl">Warning</span>
+                      </div>
+                    </div>
+
+                    <div class="metric-item critical" [class.active-crit]="floor.assets.critical > 0">
+                      <mat-icon class="crit-icon">error_outline</mat-icon>
+                      <div class="item-data">
+                        <span class="val">{{ floor.assets.critical }}</span>
+                        <span class="lbl">Critical</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+
+        </mat-expansion-panel>
+      }
+
+    </mat-accordion>
+  }
+</div>

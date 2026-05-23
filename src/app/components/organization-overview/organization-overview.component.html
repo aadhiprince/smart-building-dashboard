@@ -1,0 +1,311 @@
+<div class="widget-container" role="region" aria-label="Campus Portfolio Overview">
+  <div class="widget-header">
+    <div class="header-text">
+      <h2>Campus Portfolio Overview</h2>
+      <p class="subtitle">Real-time status of properties, devices, and operational health</p>
+    </div>
+    @if (data() && !isLoading() && !errorMessage()) {
+      <button mat-stroked-button color="primary" class="refresh-btn" (click)="loadOverviewData()">
+        <mat-icon>refresh</mat-icon> Refresh
+      </button>
+    }
+  </div>
+
+  <!-- 1. LOADING / SKELETON STATE -->
+  @if (isLoading()) {
+    <div class="skeleton-grid" role="status" aria-label="Loading portfolio data">
+      <div class="skeleton-card hero-health-skeleton">
+        <div class="shimmer circle-skeleton"></div>
+        <div class="shimmer text-skeleton title-skele"></div>
+        <div class="shimmer text-skeleton sub-skele"></div>
+      </div>
+      <div class="skeleton-property-grid">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="skeleton-card mini-card">
+            <div class="shimmer icon-skeleton"></div>
+            <div class="shimmer text-skeleton val-skele"></div>
+            <div class="shimmer text-skeleton label-skele"></div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="skeleton-card-grid">
+      @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+        <div class="skeleton-card kpi-skeleton">
+          <div class="shimmer icon-skeleton"></div>
+          <div class="shimmer text-skeleton label-skele"></div>
+          <div class="shimmer text-skeleton val-skele"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- 2. ERROR STATE -->
+  @else if (errorMessage()) {
+    <mat-card class="error-card glass-panel" role="alert" aria-live="assertive">
+      <mat-card-content>
+        <div class="error-container">
+          <div class="error-icon-wrapper">
+            <mat-icon class="error-icon">cloud_off</mat-icon>
+          </div>
+          <h3>Operational Data Unreachable</h3>
+          <p class="error-desc">{{ errorMessage() }}</p>
+          <div class="error-actions">
+            <button mat-flat-button color="warn" class="retry-btn" (click)="loadOverviewData()">
+              <mat-icon>sync</mat-icon> Reconnect Gateway
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- 3. MAIN DATA STATE -->
+  @else if (data(); as stats) {
+    <div class="top-row-grid">
+      <mat-card class="health-hero-card glass-panel highlight-border">
+        <mat-card-content class="health-card-layout">
+          <div class="radial-gauge-container">
+            <svg class="radial-svg" viewBox="0 0 160 160" role="img" aria-label="Building health score gauge">
+              <circle
+                class="radial-bg"
+                cx="80"
+                cy="80"
+                [attr.r]="radius"
+              />
+              <circle
+                class="radial-progress"
+                cx="80"
+                cy="80"
+                [attr.r]="radius"
+                [attr.stroke]="healthColor()"
+                [attr.stroke-dasharray]="circumference"
+                [attr.stroke-dashoffset]="strokeDashoffset()"
+                stroke-linecap="round"
+                transform="rotate(-90 80 80)"
+              />
+            </svg>
+            <div class="radial-text-container">
+              <span class="health-score-percent">{{ stats.healthScore }}%</span>
+              <span class="health-score-label">Health Score</span>
+            </div>
+          </div>
+          
+          <div class="health-details">
+            <div class="health-badge" [style.background-color]="healthColor() + '20'" [style.color]="healthColor()">
+              <span class="pulse-dot" [style.background-color]="healthColor()"></span>
+              {{ healthStatusText() }}
+            </div>
+            <h3>Building Condition Index</h3>
+            <p class="health-description">
+              Our sensory monitors evaluate air quality, HVAC operations, energy conservation ratios, and system uptime.
+            </p>
+            <div class="health-insights">
+              <div class="insight-item">
+                <mat-icon class="green-icon">check_circle</mat-icon>
+                <span>All <strong>{{ stats.gateways }}</strong> core gateways operating normally</span>
+              </div>
+              <div class="insight-item">
+                <mat-icon [class.red-icon]="stats.alarms > 0">warning</mat-icon>
+                <span><strong>{{ stats.alarms }}</strong> active system alarms requiring triage</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="property-scale-container">
+        <mat-card class="scale-card glass-panel area-card">
+          <mat-card-content>
+            <div class="scale-content">
+              <div class="scale-icon-box blue-gradient">
+                <mat-icon>aspect_ratio</mat-icon>
+              </div>
+              <div class="scale-data">
+                <span class="scale-value">{{ formatNumber(stats.areaSqFt) }}</span>
+                <span class="scale-label">Managed Area (Sq Ft)</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="mini-kpi-grid">
+          <mat-card class="scale-card glass-panel">
+            <mat-card-content>
+              <div class="scale-content-mini">
+                <mat-icon class="mini-icon icon-camp">domain</mat-icon>
+                <div class="mini-data">
+                  <span class="mini-value">{{ stats.campuses }}</span>
+                  <span class="mini-label">Campuses</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="scale-card glass-panel">
+            <mat-card-content>
+              <div class="scale-content-mini">
+                <mat-icon class="mini-icon icon-bldg">business</mat-icon>
+                <div class="mini-data">
+                  <span class="mini-value">{{ stats.buildings }}</span>
+                  <span class="mini-label">Buildings</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="scale-card glass-panel">
+            <mat-card-content>
+              <div class="scale-content-mini">
+                <mat-icon class="mini-icon icon-flr">layers</mat-icon>
+                <div class="mini-data">
+                  <span class="mini-value">{{ stats.floors }}</span>
+                  <span class="mini-label">Floors</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="scale-card glass-panel">
+            <mat-card-content>
+              <div class="scale-content-mini">
+                <mat-icon class="mini-icon icon-room">meeting_room</mat-icon>
+                <div class="mini-data">
+                  <span class="mini-value">{{ stats.rooms }}</span>
+                  <span class="mini-label">Rooms</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <div class="operational-grid-header">
+      <h3>Active System Telemetry</h3>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="operational-kpi-grid" role="list" aria-label="System telemetry metrics">
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box purple-gradient">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Active Occupants</span>
+            <span class="kpi-value">{{ stats.users }}</span>
+            <span class="kpi-trend trend-neutral">
+              <mat-icon>trending_flat</mat-icon> Steady occupancy
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box orange-gradient">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Monitored Assets</span>
+            <span class="kpi-value">{{ formatNumber(stats.assets) }}</span>
+            <span class="kpi-trend trend-up">
+              <mat-icon>add</mat-icon> 2 newly tagged HVAC nodes
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box cyan-gradient">
+            <mat-icon>router</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">IoT Gateways</span>
+            <span class="kpi-value">{{ stats.gateways }}</span>
+            <span class="kpi-trend trend-up-green">
+              <mat-icon>done</mat-icon> 100% online
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box blue-gradient">
+            <mat-icon>settings_ethernet</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Wired Devices</span>
+            <span class="kpi-value">{{ stats.wiredDevices }}</span>
+            <span class="kpi-trend trend-neutral">
+              <mat-icon>settings</mat-icon> PoE active
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box green-gradient">
+            <mat-icon>wifi</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Wireless Nodes</span>
+            <span class="kpi-value">{{ stats.wirelessDevices }}</span>
+            <span class="kpi-trend trend-up-green">
+              <mat-icon>network_wifi</mat-icon> Robust signal
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box dark-blue-gradient">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Work Orders (YTD)</span>
+            <span class="kpi-value">{{ formatNumber(stats.workOrders) }}</span>
+            <span class="kpi-trend trend-neutral">
+              <mat-icon>fact_check</mat-icon> 984 completed
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box pink-gradient">
+            <mat-icon>assignment_late</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label">Pending Requests</span>
+            <span class="kpi-value">{{ stats.workRequests }}</span>
+            <span class="kpi-trend trend-warning">
+              <mat-icon>hourglass_empty</mat-icon> Awaiting dispatch
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card glass-panel alarm-critical-card">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box red-gradient">
+            <mat-icon>notification_important</mat-icon>
+          </div>
+          <div class="kpi-details">
+            <span class="kpi-label red-text">Active System Alarms</span>
+            <span class="kpi-value red-text font-bold">{{ stats.alarms }}</span>
+            <span class="kpi-trend trend-danger">
+              <mat-icon>error</mat-icon> Requires immediate review
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

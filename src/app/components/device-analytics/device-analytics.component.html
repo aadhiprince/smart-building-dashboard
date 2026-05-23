@@ -1,0 +1,128 @@
+<div class="widget-container" role="region" aria-label="Device Health Analytics">
+  <div class="widget-header">
+    <div class="header-text">
+      <h2>Device Health Analytics</h2>
+      <p class="subtitle">Longitudinal telemetry analysis, active node proportions, and sensory warnings trend logs</p>
+    </div>
+    @if (analyticsData().length > 0 && !isLoading() && !errorMessage()) {
+      <button mat-stroked-button color="primary" class="refresh-btn" (click)="loadAnalytics()">
+        <mat-icon>refresh</mat-icon> Refresh Chart
+      </button>
+    }
+  </div>
+
+  <!-- 1. LOADING / SKELETON STATE -->
+  @if (isLoading()) {
+    <div class="skeleton-analytics-layout" role="status" aria-label="Loading analytics data">
+      <div class="skeleton-cards-row">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="shimmer skeleton-kpi"></div>
+        }
+      </div>
+      <div class="skeleton-chart-panel glass-panel">
+        <div class="shimmer skeleton-chart-header"></div>
+        <div class="shimmer skeleton-chart-canvas"></div>
+      </div>
+    </div>
+  }
+
+  <!-- 2. ERROR STATE -->
+  @else if (errorMessage()) {
+    <mat-card class="error-card glass-panel" role="alert" aria-live="assertive">
+      <mat-card-content>
+        <div class="error-container">
+          <div class="error-icon-wrapper">
+            <mat-icon class="error-icon">bar_chart</mat-icon>
+          </div>
+          <h3>Analytics Node Offline</h3>
+          <p class="error-desc">{{ errorMessage() }}</p>
+          <div class="error-actions">
+            <button mat-flat-button color="warn" class="retry-btn" (click)="loadAnalytics()">
+              <mat-icon>sync</mat-icon> Reconnect Analytics Engine
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- 3. MAIN DATA STATE -->
+  @else if (analyticsData().length > 0) {
+    @if (latestStats(); as stats) {
+      <div class="analytics-summary-cards" role="list" aria-label="Device health summary metrics">
+        <mat-card class="summary-tile glass-panel">
+          <mat-card-content class="tile-content">
+            <div class="tile-icon blue-gradient">
+              <mat-icon>sensors</mat-icon>
+            </div>
+            <div class="tile-data">
+              <span class="lbl">Total Active Nodes</span>
+              <span class="val">{{ stats.total }}</span>
+              <span class="sub-detail">Latest telemetry ({{ stats.month }})</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-tile glass-panel">
+          <mat-card-content class="tile-content">
+            <div class="tile-icon green-gradient">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="tile-data">
+              <span class="lbl">Healthy Status</span>
+              <span class="val green-text">{{ stats.healthy }}</span>
+              <span class="sub-detail green-text font-bold">
+                <mat-icon class="trend-icon">trending_up</mat-icon> {{ stats.healthyPct | number:'1.0-1' }}% ratio
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-tile glass-panel">
+          <mat-card-content class="tile-content">
+            <div class="tile-icon orange-gradient">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div class="tile-data">
+              <span class="lbl">Warning States</span>
+              <span class="val orange-text">{{ stats.warning }}</span>
+              <span class="sub-detail orange-text">
+                <mat-icon class="trend-icon">trending_down</mat-icon> Decreasing failures
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-tile glass-panel" [class.tile-has-crit]="stats.critical > 0">
+          <mat-card-content class="tile-content">
+            <div class="tile-icon red-gradient">
+              <mat-icon>error</mat-icon>
+            </div>
+            <div class="tile-data">
+              <span class="lbl">Critical Alarms</span>
+              <span class="val red-text">{{ stats.critical }}</span>
+              <span class="sub-detail red-text">
+                <mat-icon class="trend-icon">priority_high</mat-icon> Requires review
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+
+    <mat-card class="chart-panel glass-panel highlight-border">
+      <mat-card-content class="chart-content">
+        <div class="chart-header">
+          <div class="chart-title-info">
+            <h3>Device Health Spline Analysis</h3>
+            <span class="chart-sub">Long-term monthly telemetry tracking across active node endpoints</span>
+          </div>
+        </div>
+
+        <div class="chart-canvas-container">
+          <canvas id="device-analytics-chart" role="img" aria-label="Device health trends chart showing healthy, warning, and critical device counts over time"></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

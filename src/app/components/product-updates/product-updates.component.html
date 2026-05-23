@@ -1,0 +1,109 @@
+<div class="widget-container" role="region" aria-label="Product Updates Timeline">
+<div class="widget-header">
+    <div class="header-text">
+      <h2>System Release Notes</h2>
+      <p class="subtitle">Chronological feed of hardware patches, software upgrades, and dashboard features</p>
+    </div>
+    @if (updates().length > 0 && !isLoading() && !errorMessage()) {
+      <button mat-stroked-button color="primary" class="refresh-btn" (click)="loadUpdates()">
+        <mat-icon>refresh</mat-icon> Refresh Notes
+      </button>
+    }
+  </div>
+@if (isLoading()) {
+    <div class="timeline-skeleton" role="status" aria-label="Loading product updates">
+      <div class="skeleton-line"></div>
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="skeleton-item">
+          <div class="shimmer skeleton-dot"></div>
+          <div class="skeleton-card-wrapper">
+            <div class="skeleton-card glass-panel">
+              <div class="shimmer skeleton-badge"></div>
+              <div class="shimmer skeleton-title"></div>
+              <div class="shimmer skeleton-date"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+@else if (errorMessage()) {
+    <mat-card class="error-card glass-panel" role="alert" aria-live="assertive">
+      <mat-card-content>
+        <div class="error-container">
+          <div class="error-icon-wrapper">
+            <mat-icon class="error-icon">wifi_tethering_off</mat-icon>
+          </div>
+          <h3>Release Feed Offline</h3>
+          <p class="error-desc">{{ errorMessage() }}</p>
+          <div class="error-actions">
+            <button mat-flat-button color="warn" class="retry-btn" (click)="loadUpdates()">
+              <mat-icon>sync</mat-icon> Reconnect updates node
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+@else if (updates().length > 0) {
+    <div class="timeline-container" role="feed" aria-label="Product release timeline">
+<div class="timeline-rail"></div>
+@for (update of updates(); track update.id; let isLast = $last) {
+        <div class="timeline-item" [class.last-item]="isLast">
+<div class="timeline-bullet" [ngClass]="'bullet-color-' + update.id">
+            <span class="bullet-glow"></span>
+            <mat-icon class="bullet-icon">
+              @if (update.id === 1) { dashboard_customize }
+              @else if (update.id === 2) { widgets }
+              @else if (update.id === 3) { notifications_active }
+              @else { bug_report }
+            </mat-icon>
+          </div>
+<div class="timeline-card-wrapper">
+            <mat-card class="timeline-card glass-panel" [class.latest-card]="update.id === 1">
+              <mat-card-content class="card-layout">
+<div class="card-meta">
+                  <span class="version-badge" [ngClass]="'version-badge-' + update.id">
+                    v{{ update.version }}
+                  </span>
+                  <div class="release-date">
+                    <mat-icon>calendar_month</mat-icon>
+                    <span>{{ update.releaseDate | date:'MMMM dd, yyyy' }}</span>
+                  </div>
+                </div>
+<h3 class="update-title">{{ update.title }}</h3>
+                
+                <p class="update-description">
+                  @if (update.id === 1) {
+                    Administrators can now drag, drop, resize, and fully customize their building layouts, giving teams immediate priority over critical sensory dashboards.
+                  } @else if (update.id === 2) {
+                    We've unlocked dynamic widget parameters allowing field engineers to customize individual dials, heatmaps, and threshold triggers per IoT gateway.
+                  } @else if (update.id === 3) {
+                    System-critical dispatch logs are now connected to the central CMMS system, delivering automated high-priority email notifications when HVAC registers trip.
+                  } @else {
+                    Resolved an issue with high-frequency MQTT payload parsing, optimized rendering speed of radial SVG scores, and patched a minor memory leak in WebSocket listeners.
+                  }
+                </p>
+<div class="update-tags">
+                  <span class="tag">#SmartOS</span>
+                  @if (update.id === 1 || update.id === 2) {
+                    <span class="tag">#UI-UX</span>
+                    <span class="tag">#Release-Feature</span>
+                  } @else if (update.id === 3) {
+                    <span class="tag">#CMMS</span>
+                    <span class="tag">#Automation</span>
+                  } @else {
+                    <span class="tag">#Maintenance</span>
+                    <span class="tag">#Bug-Fix</span>
+                  }
+                </div>
+
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+</div>

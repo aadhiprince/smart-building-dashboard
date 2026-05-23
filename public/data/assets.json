@@ -1,0 +1,27 @@
+[
+  {
+    "building": "Garuda Bhive",
+    "floors": [
+      {
+        "name": "Floor 1",
+        "assets": { "healthy": 120, "warning": 18, "critical": 4 },
+        "energy": { "consumption": 240, "unit": "kWh" }
+      },
+      {
+        "name": "Floor 2",
+        "assets": { "healthy": 98, "warning": 11, "critical": 2 },
+        "energy": { "consumption": 190, "unit": "kWh" }
+      }
+    ]
+  },
+  {
+    "building": "Marathon Futurex",
+    "floors": [
+      {
+        "name": "Ground Floor",
+        "assets": { "healthy": 85, "warning": 9, "critical": 1 },
+        "energy": { "consumption": 130, "unit": "kWh" }
+      }
+    ]
+  }
+]

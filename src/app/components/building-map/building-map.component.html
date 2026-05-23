@@ -1,0 +1,93 @@
+<div class="widget-container" role="region" aria-label="Interactive Building Map">
+  <div class="widget-header">
+    <div class="header-text">
+      <h2>Interactive Property Map</h2>
+      <p class="subtitle">Geospatial telemetry nodes, localized environmental indexes, and direct campus access</p>
+    </div>
+    @if (buildings().length > 0 && !isLoading() && !errorMessage()) {
+    <button mat-stroked-button color="primary" class="refresh-btn" (click)="loadMapBuildings()">
+      <mat-icon>refresh</mat-icon> Reload Map
+    </button>
+    }
+  </div>
+  @if (isLoading()) {
+  <div class="skeleton-map-layout glass-panel" role="status" aria-label="Loading map data">
+    <div class="skeleton-sidebar">
+      <div class="shimmer skeleton-search"></div>
+      @for (i of [1, 2]; track i) {
+      <div class="shimmer skeleton-card-item"></div>
+      }
+    </div>
+    <div class="skeleton-map-canvas shimmer"></div>
+  </div>
+  }
+  @else if (errorMessage()) {
+  <mat-card class="error-card glass-panel" role="alert" aria-live="assertive">
+    <mat-card-content>
+      <div class="error-container">
+        <div class="error-icon-wrapper">
+          <mat-icon class="error-icon">map</mat-icon>
+        </div>
+        <h3>Map Gateway Disconnected</h3>
+        <p class="error-desc">{{ errorMessage() }}</p>
+        <div class="error-actions">
+          <button mat-flat-button color="warn" class="retry-btn" (click)="loadMapBuildings()">
+            <mat-icon>sync</mat-icon> Reconnect Mapping Node
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+  @else if (buildings().length > 0) {
+  <div class="map-layout-container glass-panel">
+    <div class="map-pane">
+      <div id="building-map" class="map-canvas-frame"></div>
+    </div>
+    <aside class="navigator-pane">
+      <div class="search-box-container">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="styled-search-input" placeholder="Search campus or city..." [value]="searchQuery()"
+          (input)="onSearch($event)" aria-label="Search buildings by name or city" />
+        @if (searchQuery()) {
+        <button class="clear-search-btn" (click)="searchQuery.set('')">
+          <mat-icon>close</mat-icon>
+        </button>
+        }
+      </div>
+      <div class="building-scroll-list" role="list" aria-label="Building locations">
+        <div class="list-header">
+          <span>Portfolio Locations</span>
+          <span class="count-badge">{{ filteredBuildings().length }} of {{ buildings().length }}</span>
+        </div>
+
+        @if (filteredBuildings().length === 0) {
+        <div class="empty-search-state">
+          <mat-icon>search_off</mat-icon>
+          <span>No buildings match search</span>
+        </div>
+        } @else {
+        @for (building of filteredBuildings(); track building.id) {
+        <div class="building-list-item" (click)="focusBuilding(building)">
+          <div class="item-icon-box">
+            <mat-icon>corporate_fare</mat-icon>
+          </div>
+
+          <div class="item-details">
+            <h4>{{ building.name }}</h4>
+            <span class="city-sub"><mat-icon>place</mat-icon> {{ building.city }}</span>
+            <span class="area-sub">{{ building.area.toLocaleString() }} Sq Ft</span>
+          </div>
+
+          <div class="item-health-score" [ngClass]="building.healthScore >= 70 ? 'healthy' : 'warning'">
+            {{ building.healthScore | number:'1.0-0' }}%
+          </div>
+        </div>
+        }
+        }
+      </div>
+    </aside>
+
+  </div>
+  }
+</div>

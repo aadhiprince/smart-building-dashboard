@@ -1,0 +1,138 @@
+<div class="dashboard-shell" role="application" aria-label="Smart Building Admin Dashboard">
+  <aside class="sidebar" [class.collapsed]="!sidebarOpen()" role="complementary" aria-label="Dashboard navigation sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <mat-icon>grain</mat-icon>
+      </div>
+      <div class="brand-text">
+        <h1>Building OS</h1>
+        <span>Management Suite</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <div class="nav-section-label">Operational Hub</div>
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab() === 'overview'" (click)="setActiveTab('overview')" role="tab" [attr.aria-selected]="activeTab() === 'overview'" aria-label="Portfolio Status">
+        <mat-icon>dashboard</mat-icon>
+        <span>Portfolio Status</span>
+        @if (activeTab() === 'overview') {
+          <span class="active-indicator"></span>
+        }
+      </a>
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab() === 'map'" (click)="setActiveTab('map')" role="tab" [attr.aria-selected]="activeTab() === 'map'" aria-label="Building Map">
+        <mat-icon>map</mat-icon>
+        <span>Building Map</span>
+        @if (activeTab() === 'map') {
+          <span class="active-indicator"></span>
+        }
+      </a>
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab() === 'assets'" (click)="setActiveTab('assets')" role="tab" [attr.aria-selected]="activeTab() === 'assets'" aria-label="Asset Registry">
+        <mat-icon>inventory</mat-icon>
+        <span>Asset Registry</span>
+        @if (activeTab() === 'assets') {
+          <span class="active-indicator"></span>
+        }
+      </a>
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab() === 'analytics'" (click)="setActiveTab('analytics')" role="tab" [attr.aria-selected]="activeTab() === 'analytics'" aria-label="Device Analytics">
+        <mat-icon>insights</mat-icon>
+        <span>Device Analytics</span>
+        @if (activeTab() === 'analytics') {
+          <span class="active-indicator"></span>
+        }
+      </a>
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab() === 'updates'" (click)="setActiveTab('updates')" role="tab" [attr.aria-selected]="activeTab() === 'updates'" aria-label="Product Updates">
+        <mat-icon>new_releases</mat-icon>
+        <span>Product Updates</span>
+        @if (activeTab() === 'updates') {
+          <span class="active-indicator"></span>
+        } @else {
+          <span class="badge-new">New</span>
+        }
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="profile-summary">
+        <div class="avatar">AA</div>
+        <div class="profile-text">
+          <span class="name">Aadhithyan</span>
+          <span class="role">Administrator</span>
+        </div>
+      </div>
+      <div class="version-tag">Smart Building Suite v1.0.0</div>
+    </div>
+  </aside>
+  <div class="main-wrapper">
+    <header class="app-header glass-header" role="banner" aria-label="Dashboard header">
+      <div class="header-left">
+        <button mat-icon-button class="menu-toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar navigation">
+          <mat-icon>{{ sidebarOpen() ? 'menu_open' : 'menu' }}</mat-icon>
+        </button>
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <span class="parent">BUILDING GATEWAY</span>
+          <mat-icon>chevron_right</mat-icon>
+          <span class="current">
+            @if (activeTab() === 'overview') {
+              SYSTEM OVERVIEW
+            } @else if (activeTab() === 'updates') {
+              RELEASE FEED
+            } @else if (activeTab() === 'assets') {
+              ASSET REGISTRY
+            } @else if (activeTab() === 'map') {
+              GEOSPATIAL LOCATIONS
+            } @else if (activeTab() === 'analytics') {
+              TELEMETRY TRENDS
+            }
+          </span>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="simulation-panel" role="region" aria-label="Network simulation controls">
+          <div class="control-group">
+            <span class="control-label" id="latency-label"><mat-icon>speed</mat-icon> Latency</span>
+            <div class="styled-select-wrapper">
+              <select 
+                class="styled-select" 
+                [value]="dashboardService.latencyMs()" 
+                (change)="onLatencyChange($event)"
+                aria-labelledby="latency-label">
+                <option [value]="0">Direct (0ms)</option>
+                <option [value]="500">Fast (500ms)</option>
+                <option [value]="1500">Normal (1.5s)</option>
+                <option [value]="3000">Slow (3.0s)</option>
+              </select>
+              <mat-icon class="select-arrow">arrow_drop_down</mat-icon>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label"><mat-icon>wifi_off</mat-icon> Simulate Failure</span>
+            <label class="styled-switch" aria-label="Toggle mock api failure mode">
+              <input 
+                type="checkbox" 
+                [checked]="dashboardService.forceError()" 
+                (change)="onToggleError($event)">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="content-body" role="main" aria-live="polite" aria-label="Dashboard content area">
+      <div class="content-container">
+        @if (activeTab() === 'overview') {
+          <app-organization-overview></app-organization-overview>
+        } @else if (activeTab() === 'updates') {
+          <app-product-updates></app-product-updates>
+        } @else if (activeTab() === 'assets') {
+          <app-asset-health></app-asset-health>
+        } @else if (activeTab() === 'map') {
+          <app-building-map></app-building-map>
+        } @else if (activeTab() === 'analytics') {
+          <app-device-analytics></app-device-analytics>
+        }
+      </div>
+    </main>
+  </div>
+</div>

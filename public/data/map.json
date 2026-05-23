@@ -1,0 +1,20 @@
+[
+  {
+    "id": 12,
+    "name": "Marathon Futurex",
+    "city": "Mumbai",
+    "area": 100000,
+    "totalFloors": 1,
+    "healthScore": 72,
+    "geoLocation": [12.9144032, 77.5995815]
+  },
+  {
+    "id": 14,
+    "name": "Garuda Bhive",
+    "city": "Bengaluru",
+    "area": 5000,
+    "totalFloors": 1,
+    "healthScore": 63.64,
+    "geoLocation": [12.9160004, 77.6159078]
+  }
+]
