@@ -565,3 +565,49 @@ $transition-speed: 0.3s;
     transform: translateY(0);
   }
 }
+
+// =============================================
+// RESPONSIVE: MOBILE & TABLET
+// =============================================
+
+// Fix skeleton layout to match the live map layout at ≤900px
+@media (max-width: 900px) {
+  .skeleton-map-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+
+    .skeleton-sidebar {
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      height: 280px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .widget-header {
+    .header-text {
+      h2 { font-size: 1.35rem; }
+      .subtitle { font-size: 0.82rem; }
+    }
+  }
+
+  .search-box-container {
+    padding: 0.75rem;
+  }
+
+  .building-list-item {
+    padding: 0.65rem 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-header .header-text h2 { font-size: 1.2rem; }
+
+  .map-layout-container {
+    height: auto;
+
+    .map-pane { height: 380px; }
+    .navigator-pane { height: 280px; }
+  }
+}

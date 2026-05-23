@@ -24,7 +24,8 @@ import { DashboardService } from './services/dashboard.service';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly sidebarOpen = signal<boolean>(true);
+  // Start closed on mobile so content is immediately visible
+  protected readonly sidebarOpen = signal<boolean>(window.innerWidth > 768);
   readonly activeTab = signal<'overview' | 'updates' | 'assets' | 'map' | 'analytics'>('overview');
   protected readonly dashboardService = inject(DashboardService);
 
@@ -36,6 +37,10 @@ export class App {
 
   setActiveTab(tab: 'overview' | 'updates' | 'assets' | 'map' | 'analytics'): void {
     this.activeTab.set(tab);
+    // Auto-close the sidebar drawer when a nav item is tapped on mobile
+    if (window.innerWidth <= 768) {
+      this.sidebarOpen.set(false);
+    }
   }
 
   toggleSidebar(): void {

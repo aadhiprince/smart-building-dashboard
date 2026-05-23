@@ -487,3 +487,90 @@ $transition-speed: 0.3s;
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+// =============================================
+// RESPONSIVE: MOBILE & TABLET
+// =============================================
+@media (max-width: 768px) {
+  .widget-header {
+    .header-text {
+      h2 { font-size: 1.35rem; }
+      .subtitle { font-size: 0.82rem; }
+    }
+  }
+
+  // Compact the timeline rail on mobile
+  .timeline-container {
+    padding-left: 48px;
+  }
+
+  .timeline-rail {
+    left: 14px;
+  }
+
+  .timeline-bullet {
+    left: -48px;
+    width: 36px;
+    height: 36px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  // Mirror compaction in skeleton
+  .timeline-skeleton {
+    padding-left: 48px;
+
+    .skeleton-line { left: 14px; }
+
+    .skeleton-dot {
+      left: -48px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-header .header-text h2 { font-size: 1.2rem; }
+
+  .timeline-container {
+    padding-left: 40px;
+    gap: 1.75rem;
+  }
+
+  .timeline-rail { left: 10px; }
+
+  .timeline-bullet {
+    left: -40px;
+    width: 30px;
+    height: 30px;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .timeline-card .card-layout {
+    padding: 1.1rem;
+    gap: 0.65rem;
+  }
+
+  .timeline-card .card-meta {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .timeline-card .update-title { font-size: 1rem; }
+
+  .timeline-skeleton {
+    padding-left: 40px;
+    .skeleton-line { left: 10px; }
+    .skeleton-dot { left: -40px; width: 30px; height: 30px; }
+  }
+}

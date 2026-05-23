@@ -368,12 +368,6 @@ $border-color: rgba(255, 255, 255, 0.08);
       align-items: center;
       gap: 0.75rem;
 
-      @media (max-width: 600px) {
-        &:first-child {
-          display: none;
-        }
-      }
-
       .control-label {
         font-size: 0.75rem;
         font-weight: 600;
@@ -544,4 +538,141 @@ $border-color: rgba(255, 255, 255, 0.08);
   100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
+}
+
+// =============================================
+// RESPONSIVE: TABLET  (769px – 1024px)
+// Auto-collapse sidebar to icon-only strip
+// =============================================
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: $sidebar-collapsed-width;
+
+    .brand-text,
+    .sidebar-nav span,
+    .nav-section-label,
+    .badge-soon,
+    .badge-new,
+    .profile-text,
+    .version-tag {
+      opacity: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    .sidebar-brand {
+      padding: 1.25rem 0.5rem;
+      justify-content: center;
+    }
+
+    .nav-item {
+      padding: 0.75rem 0;
+      justify-content: center;
+      margin: 0.25rem 0.5rem;
+      border-radius: 12px;
+
+      mat-icon { margin: 0; }
+    }
+
+    .profile-summary {
+      justify-content: center;
+      padding: 0.5rem 0;
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVE: MOBILE  (≤768px)
+// Sidebar becomes a slide-in overlay drawer
+// =============================================
+@media (max-width: 768px) {
+  // Sidebar becomes a fixed overlay drawer sliding in from the left
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    z-index: 300;
+    // Always keep full width so it looks correct when sliding in
+    width: $sidebar-width !important;
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.65);
+    // Only animate the slide, not the width
+    transition: transform $transition-speed cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform: translateX(0); // visible (no .collapsed class = open)
+
+    // Make tap targets larger for touch
+    .nav-item {
+      padding: 0.9rem 1.25rem;
+      margin: 0.2rem 0.75rem;
+    }
+
+    // When .collapsed is added: slide completely off-screen
+    &.collapsed {
+      transform: translateX(-100%);
+      width: $sidebar-width !important; // keep full width even while hidden
+    }
+  }
+
+  // Scrim / backdrop overlay shown when sidebar drawer is open
+  .sidebar:not(.collapsed) ~ .main-wrapper::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 250;
+    animation: mobile-scrim-in 0.25s ease forwards;
+  }
+
+  // Main wrapper fills full width (sidebar is overlaid, not in flow)
+  .main-wrapper {
+    width: 100%;
+    max-width: 100vw;
+  }
+}
+
+// =============================================
+// RESPONSIVE: SMALL MOBILE  (≤480px)
+// =============================================
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 0.75rem;
+  }
+
+  .content-body {
+    padding: 0.75rem;
+  }
+
+  // Hide "Simulate Failure" label text, keep the switch icon
+  .app-header .simulation-panel .control-label {
+    font-size: 0;          // hides the text node
+    gap: 0;
+
+    mat-icon {
+      font-size: 16px;     // restore icon size
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .app-header .simulation-panel {
+    gap: 0.5rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  .app-header .simulation-panel .control-group {
+    gap: 0.25rem;
+  }
+
+  .app-header .simulation-panel .styled-select-wrapper .styled-select {
+    padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    max-width: 90px;
+  }
+}
+
+@keyframes mobile-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

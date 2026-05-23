@@ -1,5 +1,7 @@
 # 🏢 Smart Building Admin Dashboard
 
+**[🚀 View Live Demo on Netlify](https://smart-building-dashboard-aa.netlify.app/)**
+
 A modern, enterprise-grade Smart Building Administration Dashboard built with **Angular 21**, **Angular Material**, and **TypeScript**. This project demonstrates proficiency in component-based architecture, responsive design, data visualization, and asynchronous API handling.
 
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=flat-square&logo=angular)
@@ -234,7 +236,22 @@ ng deploy --base-href=/smart-building-dashboard/
 
 ## 📸 Screenshots
 
-> Screenshots can be added here after running the application.
+> **[📁 View all high-res screenshots and Demo Video on Google Drive](https://drive.google.com/drive/folders/1dZXtUsIUDx31oWvTqrEld6DpRwZYI33n?usp=sharing)**
+
+### 1. Dashboard Overview
+![Dashboard Overview](./public/data/Dashboard_OverView.png)
+
+### 2. Property Map
+![Property Map](./public/data/Property_Map.png)
+
+### 3. Asset Registry
+![Asset Registry](./public/data/Asset_Registery.png)
+
+### 4. Health Analytics
+![Health Analytics](./public/data/Health_Analytics.png)
+
+### 5. Production Updates
+![Production Updates](./public/data/Production_Updates.png)
 
 | View | Description |
 |---|---|

@@ -569,3 +569,38 @@ $transition-speed: 0.3s;
   from { opacity: 0.8; }
   to { opacity: 1; }
 }
+
+// =============================================
+// RESPONSIVE: MOBILE & TABLET
+// =============================================
+@media (max-width: 768px) {
+  .widget-header {
+    .header-text {
+      h2 { font-size: 1.35rem; }
+      .subtitle { font-size: 0.82rem; }
+    }
+  }
+
+  .floors-grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-header .header-text h2 { font-size: 1.2rem; }
+
+  .panel-title-wrapper {
+    gap: 0.75rem;
+    .building-meta h3 { font-size: 1rem; }
+    .building-floor-count { font-size: 0.7rem; }
+  }
+
+  .floor-card-header .floor-title-info h4 { font-size: 0.95rem; }
+
+  .floor-telemetry-metrics {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+}
